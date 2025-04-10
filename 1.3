@@ -1,0 +1,57 @@
+#include <iostream>
+using namespace std;
+
+int main() {
+    int volba;
+    string classa;
+    int zivoty = 0;
+    int utok = 0;
+    int mana = 0;
+
+    while (true) {
+        cout << "Vyber si postavu:\n";
+        cout << "1) Paladin\n";
+        cout << "2) Mag\n";
+        cout << "3) Lovec\n";
+        cout << "Zadej cislo classy: ";
+        cin >> volba;
+
+        if (volba == 1) {
+            classa = "Paladin";
+            zivoty = 5;
+            utok = 3;
+            mana = 5;
+        } else if (volba == 2) {
+            classa = "mag";
+            zivoty = 3;
+            utok = 2;
+            mana = 8;
+        } else if (volba == 3) {
+            classa = "Lovec";
+            zivoty = 4;
+            utok = 4;
+            mana = 3;
+        } else {
+            cout << "To neni ono.\n";
+            continue; 
+        }
+
+        cout << "Zvolil jsi: " << classa << "\n";
+        cout << "Zivoty: " << zivoty << "\n";
+        cout << "Utok: " << utok << "\n";
+        cout << "Mana: " << mana << "\n";
+
+        string potvrzeni;
+        cout << "Chces tuto classu potvrdit? (ano/ne): ";
+        cin >> potvrzeni;
+
+        if (potvrzeni == "ano") {
+            break; 
+        }
+    }
+
+    cout << endl << "Lets get started " << classa << "!\n";
+
+    // dasli zmeny v 1.4 file.
+    return 0;
+}
