@@ -1,0 +1,128 @@
+#include <iostream> 
+#include <vector>
+#include <ctime>
+#include <cstdlib>
+
+using namespace std;
+
+int main() {
+    int volba;
+    string classa;
+    int zivoty = 0;
+    int utok = 0;
+    int mana = 0;
+
+    while (true) {
+        cout << "Vyber si postavu:\n";
+        cout << "1) Paladin\n";
+        cout << "2) Mag\n";
+        cout << "3) Lovec\n";
+        cout << "Zadej cislo classy: ";
+        cin >> volba;
+
+        if (volba == 1) {
+            classa = "Paladin";
+            zivoty = 5;
+            utok = 3;
+            mana = 5;
+        } else if (volba == 2) {
+            classa = "mag";
+            zivoty = 3;
+            utok = 2;
+            mana = 8;
+        } else if (volba == 3) {
+            classa = "Lovec";
+            zivoty = 4;
+            utok = 4;
+            mana = 3;
+        } else {
+            cout << "To neni ono.\n";
+            continue; 
+        }
+
+        cout << "Zvolil jsi: " << classa << "\n";
+        cout << "Zivoty: " << zivoty << "\n";
+        cout << "Utok: " << utok << "\n";
+        cout << "Mana: " << mana << "\n";
+
+        string potvrzeni;
+        cout << "Chces tuto classu potvrdit? (ano/ne): ";
+        cin >> potvrzeni;
+
+        if (potvrzeni == "ano") {
+            break; 
+        }
+    }
+
+    cout << endl << "Lets get started " << classa << "!\n";
+
+    
+    // game start here -   file 1.4
+
+
+    // random bumners - srand/randomizer
+    srand(time(0));
+
+  
+    vector<string> mapa;
+    mapa.push_back("Vesnice");
+    mapa.push_back("Monstrum");
+    mapa.push_back("Monstrum");
+    mapa.push_back("2xMonstrum");
+    mapa.push_back("MiniBoss");
+    mapa.push_back("Vesnice");
+    mapa.push_back("Monstrum");
+    mapa.push_back("2xMonstrum");
+    mapa.push_back("2xMonstrum");
+    mapa.push_back("MiniBoss");
+    mapa.push_back("Vesnice");
+    mapa.push_back("2xMonstrum");
+    mapa.push_back("2xMonstrum");
+    mapa.push_back("3xMonstrum");
+    mapa.push_back("Vesnice");
+    mapa.push_back("HlavniBoss");
+
+    int zlato = 10;
+
+    // mapa research 
+    for (int i = 0; i < mapa.size(); i++) {
+        cout << "\nJsi v lokaci: " << mapa[i] << endl;
+
+        if (mapa[i] == "Vesnice") {
+            cout << "Jsi ve vesnici. Chillujes...\n";
+            zivoty = 5;
+            mana = 5;
+            cout << "Obnovil jsi zivoty i manu. Mas " << zivoty << " zivotu a " << mana << " many.\n";
+        }
+
+        if (mapa[i] == "Monstrum") {
+            int hp_monstra = 3;
+            cout << "POROR     -     Narazil jsi na monstrum!     Zacina souboj.\n";
+
+            while (hp_monstra > 0 && zivoty > 0) {
+                cout << "Utocis za " << utok << " utoku.\n";
+                hp_monstra = hp_monstra - utok;
+
+                if (hp_monstra > 0) {
+                    cout << "Monstrum zautocilo zpet!\n";
+                    zivoty = zivoty - 1;
+                    cout << "Mas " << zivoty << " zivotu.\n";
+                }
+            }
+
+            if (zivoty <= 0) {
+                cout << "Byl jsi porazen. Konec hry.\n";
+                return 0;
+            }
+
+            cout << "Porazil jsi monstrum! Ziskavas 5 zlatych.\n";
+            zlato = zlato + 5;
+            cout << "Mas celkem " << zlato << " zlata.\n";
+        }
+
+        // PRIDAT VE 1.5: 2xMonstrum, MiniBoss, 3xMonstrum atd. pridame pozdeji
+    }
+
+    cout << "\nMno, tak jsi dokoncil mapu! Dobra prace.\n";
+    return 0;
+}
