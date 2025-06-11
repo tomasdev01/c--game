@@ -1,0 +1,192 @@
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <ctime>
+#include <limits>
+
+using namespace std;
+
+// === A1 DEKLARACE ===
+struct Hrac {
+    string jmeno;
+    int zivoty;
+    int maxZivoty;
+    int mana;
+    int maxMana;
+    int utok;
+    int zlato;
+    int level;
+    int xp;
+};
+
+struct Nepritel {
+    string jmeno;
+    int zivoty;
+    int utok;
+};
+
+// === B2 FUNKCE ===
+void pauza() {
+    cout << "\nStiskni ENTER...";
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cin.get();
+    // vetsi zazitek > clovek musi cekat. (inspirace na nejakem IT Blogu)
+}
+
+int nahodne(int min, int max) {
+    return rand() % (max - min + 1) + min;
+}
+
+void vypisStaty(Hrac &h) {
+    cout << "\n===== PERSONA DATA =====\n";
+    cout << "Your unicate name: " << h.jmeno << endl;
+    cout << "Your lives: " << h.zivoty << "/" << h.maxZivoty << endl;
+    cout << "Mana: " << h.mana << "/" << h.maxMana << endl;
+    cout << "Attack: " << h.utok << endl;
+    cout << "Gold: " << h.zlato << endl;
+    cout << "Level: " << h.level << endl;
+    cout << "XP: " << h.xp << endl;
+    cout << "__________________________________________\n";
+}
+
+void levelUp(Hrac &h) {
+    h.level++;
+    h.maxZivoty += 2;
+    h.maxMana += 1;
+    h.utok += 1;
+    h.zivoty = h.maxZivoty;
+    h.mana = h.maxMana;
+    cout << "\nLEVEL UP, " << h.jmeno << " !" << endl;
+    cout << "Tvuj aktualni level je" << h.level << "Keep going!" << endl;
+}
+
+void utokNaNepritele(Hrac &h, Nepritel &n) {
+    cout << "\n Utocis na " << n.jmeno << " za " << h.utok << " poskozeni." << endl;
+    n.zivoty -= h.utok;
+}
+
+void utokNepritele(Hrac &h, Nepritel &n) {
+    cout << n.jmeno << " útočí na tebe za " << n.utok << " poškození!\n";
+    h.zivoty -= n.utok;
+}
+
+void boj(Hrac &h, Nepritel n) {
+    cout << "\n Narazil jsi na nepritele: " << n.jmeno << "!\n";
+
+    while (h.zivoty > 0 && n.zivoty > 0) {
+        utokNaNepritele(h, n);
+        if (n.zivoty <= 0) break;
+        utokNepritele(h, n);
+        pauza();
+    }
+
+    if (h.zivoty > 0) {
+        cout << "\nZabil jsi " << n.jmeno << "! Získáváš XP a zlato.\n";
+        h.xp += 5;
+        h.zlato += nahodne(2, 5);
+        if (h.xp >= 10) {
+            levelUp(h);
+            h.xp = 0;
+        }
+    } else {
+        cout << "\nZemřel jsi! Konec hry.\n";
+        exit(0);
+    }
+}
+
+void vesnice(Hrac &h) {
+    cout << "\nVitej ve vesnici! Dej si odpocinek," << h.jmeno << " ,jestli chces.\n";
+    cout << "1. Vylecit (5 zlato)\n";
+    cout << "2. Vylepsit útok (10 zlato)\n";
+    cout << "3. Pokracovat\n";
+    int volba;
+    cin >> volba;
+    if (volba == 1 && h.zlato >= 5) {
+        h.zivoty = h.maxZivoty;
+        h.zlato -= 5;
+        cout << "Vylecil ses.\n";
+    } else if (volba == 2 && h.zlato >= 10) {
+        h.utok++;
+        h.zlato -= 10;
+        cout << "Zvysil sis utok," << h.jmeno << "!\n";
+    }
+}
+
+void bossFight(Hrac &h) {
+    Nepritel kebabex = {"Kebabex", 40, 0};
+    int faze = 1;
+    cout << "\n=== BOJ S BOSSEM KEBABEXEM ===\n";
+
+    while (h.zivoty > 0 && kebabex.zivoty > 0) {
+        cout << "\nFaze: " << faze << endl;
+        if (faze == 1) {
+            cout << "Kebabex se otaci na spizu. Nic se nedeje, zatim.\n";
+        } else if (faze == 2) {
+            int dmg = 2 + (h.level - 1) * 2;
+            cout << "Kebabex preteka tukem. Utok za " << dmg << "!\n";
+            h.zivoty -= dmg;
+        } else if (faze == 3) {
+            int dmg = h.maxZivoty / 10;
+            cout << "Kebabex se roztristil na kousky! Utok za " << dmg << "!\n";
+            h.zivoty -= dmg;
+        } else if (faze == 4) {
+            int typ = nahodne(1, 2);
+            if (typ == 1) {
+                cout << "Kebabex se namocil v cesnekove pmacce:). Lecí se ted o 10.\n";
+                kebabex.zivoty += 10;
+            } else {
+                cout << "Kebabex se namocil v bylinkové omáčce. Leci 20 sobe a 10 tobe.\n";
+                kebabex.zivoty += 20;
+                h.zivoty += 10;
+                if (h.zivoty > h.maxZivoty) h.zivoty = h.maxZivoty;
+            }
+        }
+
+        utokNaNepritele(h, kebabex);
+        faze++;
+        if (faze > 4) faze = 1;
+        pauza();
+    }
+
+    if (h.zivoty > 0) {
+        cout << "\nGratuluji! Porazil jsi Kebabexe a vyhral jsi hru, " << h.jmeno << "!\n";
+    } else {
+        cout << "\nKebabex te tentokrat porazil.\n";
+        cout << "Zvladnes to priste, " << h.jmeno << " ?" << endl;
+    }
+}
+
+int main() {
+    srand(time(0));
+    Hrac h;
+    h.jmeno;
+    h.maxZivoty = 10;
+    h.zivoty = 10;
+    h.maxMana = 5;
+    h.mana = 5;
+    h.utok = 3;
+    h.zlato = 10;
+    h.level = 1;
+    h.xp = 0;
+
+    cout << "Mega software solutions, loading...\n";
+    cout << "Select your best nickname: ";
+
+    cin >> h.jmeno;
+    cout << "Welcome, " << h.jmeno << " !" ;
+
+
+    vypisStaty(h);
+    pauza();
+
+    // esy way to kebabex
+    for (int i = 0; i < 5; i++) {
+        Nepritel nepr = {"Goblin", 6 + i, 2 + i};
+        boj(h, nepr);
+        if (i == 2) vesnice(h);
+    }
+
+    bossFight(h);
+
+    return 0;
+}
